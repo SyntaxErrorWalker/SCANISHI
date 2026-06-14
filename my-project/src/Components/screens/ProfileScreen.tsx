@@ -39,8 +39,8 @@ export default function ProfileScreen({ onNavigate }: ProfileScreenProps) {
   }, []);
 
   const displayName =
-    typeof userData?.name === "string" && userData.name.trim()
-      ? userData.name
+    typeof userData?.first_name === "string" && userData.first_name.trim()
+      ? userData.first_name
       : "Нэйт";
   const username =
     typeof userData?.username === "string" && userData.username.trim()
