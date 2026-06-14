@@ -2,6 +2,8 @@ import { buildApiUrl } from "./config";
 import { isTokenExpired, parseJwt } from "./jwt";
 
 const ACCESS_TOKEN_KEY = "access_token";
+const AUTH_INIT_PATH = "api/v1/auth/init";
+const AUTH_REFRESH_PATH = "api/v1/auth/refresh";
 
 type AuthResponse = {
   access_token?: string;
@@ -42,7 +44,7 @@ function getTelegramInitData() {
 
 export async function tryRefreshToken(): Promise<string | null> {
   try {
-    const response = await fetch(buildApiUrl("auth/refresh"), {
+    const response = await fetch(buildApiUrl(AUTH_REFRESH_PATH), {
       method: "POST",
       credentials: "include",
     });
@@ -64,7 +66,7 @@ export async function initTelegramAuth(): Promise<string | null> {
   }
 
   try {
-    const response = await fetch(buildApiUrl("auth/init"), {
+    const response = await fetch(buildApiUrl(AUTH_INIT_PATH), {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ tg_web_app_data: initData }),
