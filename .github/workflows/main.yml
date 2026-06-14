@@ -53,6 +53,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BOT_USERNAME=${{ vars.BOT_USERNAME }}
+            BACKEND_URL=${{ vars.BACKEND_URL }}
+            YMAPS_API_KEY=${{ vars.YMAPS_API_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -87,6 +91,6 @@ jobs:
                '    ports:' \
                '      - \"${{ secrets.APP_PORT }}:80\"' \
                > compose.yml
-             $compose -f compose.yml pull
+             \$compose -f compose.yml pull
              docker logout ghcr.io
-             $compose -f compose.yml up -d --remove-orphans"
+             \$compose -f compose.yml up -d --remove-orphans"
