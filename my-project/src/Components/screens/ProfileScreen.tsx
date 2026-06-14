@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Screen,
   TgHeader,
@@ -8,12 +9,44 @@ import {
   Avatar,
 } from "../ui/DesignSystem";
 import Icon from "../ui/Icon";
+import { initTelegramAuth } from "../../lib/auth";
+import { parseJwt } from "../../lib/jwt";
+import type { JwtPayload } from "../../lib/jwt";
 
 interface ProfileScreenProps {
   onNavigate?: (id: string) => void;
 }
 
 export default function ProfileScreen({ onNavigate }: ProfileScreenProps) {
+  const [userData, setUserData] = useState<JwtPayload | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUserData() {
+      const token = await initTelegramAuth();
+
+      if (isMounted) {
+        setUserData(token ? parseJwt(token) : null);
+      }
+    }
+
+    void loadUserData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const displayName =
+    typeof userData?.name === "string" && userData.name.trim()
+      ? userData.name
+      : "Нэйт";
+  const username =
+    typeof userData?.username === "string" && userData.username.trim()
+      ? `@${userData.username}`
+      : "@nate_void";
+
   const stats = [
     { label: "Сканы", val: "47", icon: "qr", c: "#3BE0FF" },
     { label: "Квесты", val: "5", icon: "quest", c: "#A78BFF" },
@@ -54,13 +87,13 @@ export default function ProfileScreen({ onNavigate }: ProfileScreenProps) {
                 className="font-ui font-bold text-txt"
                 style={{ fontSize: 19 }}
               >
-                Нэйт
+                {displayName}
               </div>
               <div
                 className="font-mono text-txt2"
                 style={{ fontSize: 12, marginTop: 2 }}
               >
-                @nate_void
+                {username}
               </div>
             </div>
             <LevelRing level={14} pct={68} size={58} />

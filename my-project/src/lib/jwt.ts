@@ -1,4 +1,4 @@
-type JwtPayload = {
+export type JwtPayload = {
   exp?: number;
   [key: string]: unknown;
 };

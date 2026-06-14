@@ -1,4 +1,4 @@
-import { buildApiUrl, getTelegramBotUrl } from "./config";
+import { buildApiUrl } from "./config";
 import { isTokenExpired, parseJwt } from "./jwt";
 
 const ACCESS_TOKEN_KEY = "access_token";
@@ -39,26 +39,7 @@ function getTelegramInitData() {
   webApp?.ready?.();
   webApp?.expand?.();
 
-  return webApp?.initData?.trim() || getTelegramInitDataFromUrl();
-}
-
-function getTelegramInitDataFromUrl() {
-  const sources = [window.location.hash, window.location.search];
-
-  for (const source of sources) {
-    const params = new URLSearchParams(source.replace(/^[#?]/, ""));
-    const initData = params.get("tgWebAppData");
-    if (initData) return initData;
-  }
-
-  return "";
-}
-
-function redirectToTelegramBot() {
-  const botUrl = getTelegramBotUrl();
-  if (botUrl) {
-    window.location.href = botUrl;
-  }
+  return webApp?.initData?.trim() || "";
 }
 
 export async function tryRefreshToken(): Promise<string | null> {
@@ -81,7 +62,6 @@ export async function initTelegramAuth(): Promise<string | null> {
     console.warn(
       "Telegram initData is empty. Open the app inside Telegram WebApp.",
     );
-    redirectToTelegramBot();
     return null;
   }
 
