@@ -6,6 +6,7 @@ import ScanScreen from "./Components/screens/ScanScreen";
 import MapScreen from "./Components/screens/MapScreen";
 import QuestsScreen from "./Components/screens/QuestsScreen";
 import ProfileScreen from "./Components/screens/ProfileScreen";
+import { getValidAccessToken } from "./lib/auth";
 
 type ScreenId =
   | "splash"
@@ -18,13 +19,37 @@ type ScreenId =
 
 function App() {
   const [screen, setScreen] = useState<ScreenId>("splash");
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     const t1 = setTimeout(() => setScreen("login"), 2800);
     return () => clearTimeout(t1);
   }, []);
 
-  const handleLogin = () => setScreen("home");
+  const handleLogin = async () => {
+    if (isLoggingIn) return;
+
+    setIsLoggingIn(true);
+    setLoginError(null);
+
+    try {
+      const token = await getValidAccessToken();
+      if (token) {
+        setScreen("home");
+        return;
+      }
+
+      setLoginError(
+        "Не удалось войти через Telegram. Открой приложение внутри Telegram.",
+      );
+    } catch (error) {
+      console.error("Login failed:", error);
+      setLoginError("Backend недоступен или настроен неверно.");
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
 
   const handleNavigate = (id: string) => {
     if (
@@ -51,9 +76,11 @@ function App() {
     >
       {screen === "splash" && <SplashScreen />}
       {screen === "login" && (
-        <div onClick={handleLogin} className="cursor-pointer">
-          <LoginScreen />
-        </div>
+        <LoginScreen
+          error={loginError}
+          isLoading={isLoggingIn}
+          onLogin={handleLogin}
+        />
       )}
       {screen === "home" && <HomeScreen onNavigate={handleNavigate} />}
       {screen === "scan" && <ScanScreen onNavigate={handleNavigate} />}

@@ -1,7 +1,17 @@
 import { Screen, Emblem } from "../ui/DesignSystem";
 import Icon from "../ui/Icon";
 
-export default function LoginScreen() {
+type LoginScreenProps = {
+  error?: string | null;
+  isLoading?: boolean;
+  onLogin: () => void;
+};
+
+export default function LoginScreen({
+  error,
+  isLoading,
+  onLogin,
+}: LoginScreenProps) {
   const feats = [
     { icon: "qr", t: "Сканируй метки", s: "QR и AR-точки в реальном мире" },
     { icon: "gem", t: "Собирай артефакты", s: "Редкие предметы и секреты" },
@@ -82,22 +92,35 @@ export default function LoginScreen() {
         </div>
         <div className="flex-1" />
         <div style={{ paddingBottom: 40 }}>
-          <div
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={onLogin}
             className="flex items-center justify-center gap-2.5"
             style={{
+              width: "100%",
               height: 56,
               borderRadius: 17,
               background: "linear-gradient(135deg,#2AABEE,#229ED9)",
               color: "#fff",
+              opacity: isLoading ? 0.75 : 1,
               boxShadow:
                 "0 0 28px rgba(42,171,238,0.45), 0 10px 24px rgba(0,0,0,0.4)",
             }}
           >
             <Icon name="tg" size={22} color="#fff" sw={1.6} />
             <span className="font-ui font-semibold" style={{ fontSize: 16.5 }}>
-              Войти через Telegram
+              {isLoading ? "Входим..." : "Войти через Telegram"}
             </span>
-          </div>
+          </button>
+          {error && (
+            <div
+              className="font-ui text-center"
+              style={{ color: "#ff8a8a", fontSize: 12, marginTop: 12 }}
+            >
+              {error}
+            </div>
+          )}
           <div
             className="font-ui text-txt3 text-center"
             style={{ fontSize: 11, marginTop: 16, lineHeight: 1.5 }}
