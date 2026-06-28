@@ -7,36 +7,6 @@ interface ScanScreenProps {
 }
 
 export default function ScanScreen({ onNavigate }: ScanScreenProps) {
-  const [scannedData, setScannedData] = useState("");
-
-  const handleScanClick = () => {
-    // 1. Check if the app is actually running inside Telegram
-    const tg = window.Telegram?.WebApp;
-
-    if (!tg) {
-      setScannedData("Сканер недоступен в веб-версии");
-      return;
-    }
-
-    // 3. Trigger the native Telegram QR scanner popup
-    tg.showScanQrPopup(
-      {
-        text: "Align the QR code inside the frame to scan", // Custom description text
-      },
-      (text) => {
-        // This callback receives the raw string read from the QR code
-        setScannedData(text);
-
-        // Return true to automatically close the camera popup after a successful scan
-        return true;
-      },
-    );
-  };
-
-  useEffect(() => {
-    handleScanClick();
-  }, []);
-
   return (
     <Screen nav="scan" onNavigate={onNavigate}>
       <div className="flex flex-1 flex-col">
@@ -173,12 +143,6 @@ export default function ScanScreen({ onNavigate }: ScanScreenProps) {
                 </span>
               </div>
               <div className="mt-2.5 flex items-center justify-between">
-                <span
-                  className="font-ui font-semibold text-txt"
-                  style={{ fontSize: 14 }}
-                >
-                  {scannedData || "ТЦ «Орбита» · Вход"}
-                </span>
                 <RarityTag rarity="rare" />
               </div>
             </GlassCard>

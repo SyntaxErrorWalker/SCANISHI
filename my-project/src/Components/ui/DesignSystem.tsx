@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Icon from "./Icon";
 
 export const RAR: Record<string, { c: string; name: string }> = {
@@ -363,6 +364,33 @@ export function BottomNav({ active = "home", onNavigate }: BottomNavProps) {
     { id: "quests", icon: "quest", label: "Квесты" },
     { id: "profile", icon: "user", label: "Профиль" },
   ];
+
+  const [scannedData, setScannedData] = useState("");
+
+  const handleScanClick = () => {
+    // 1. Check if the app is actually running inside Telegram
+    const tg = window.Telegram?.WebApp;
+
+    if (!tg) {
+      setScannedData("Сканер недоступен в веб-версии");
+      return;
+    }
+
+    // 3. Trigger the native Telegram QR scanner popup
+    tg.showScanQrPopup(
+      {
+        text: "Align the QR code inside the frame to scan", // Custom description text
+      },
+      (text) => {
+        // This callback receives the raw string read from the QR code
+        setScannedData(text);
+
+        // Return true to automatically close the camera popup after a successful scan
+        return true;
+      },
+    );
+  };
+
   return (
     <div
       className="absolute left-0 right-0 bottom-0 z-40"
@@ -390,7 +418,7 @@ export function BottomNav({ active = "home", onNavigate }: BottomNavProps) {
               <div key={it.id} className="relative w-14 flex justify-center">
                 <button
                   key={it.id}
-                  onClick={() => onNavigate?.(it.id)}
+                  onClick={() => handleScanClick()}
                   className="holo flex items-center justify-center"
                   style={{
                     width: 54,
