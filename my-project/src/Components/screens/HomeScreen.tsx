@@ -9,7 +9,11 @@ import {
 } from "../ui/DesignSystem";
 import Icon from "../ui/Icon";
 import { useAuth } from "../../lib/auth-context";
-import { getUserDisplayName, getUserUsername } from "../../lib/user";
+import {
+  getPhotoUrl,
+  getUserDisplayName,
+  getUserUsername,
+} from "../../lib/user";
 
 interface HomeScreenProps {
   onNavigate?: (id: string) => void;

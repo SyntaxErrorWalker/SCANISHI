@@ -9,7 +9,11 @@ import {
 } from "../ui/DesignSystem";
 import Icon from "../ui/Icon";
 import { useAuth } from "../../lib/auth-context";
-import { getUserDisplayName, getUserUsername } from "../../lib/user";
+import {
+  getPhotoUrl,
+  getUserDisplayName,
+  getUserUsername,
+} from "../../lib/user";
 
 interface ProfileScreenProps {
   onNavigate?: (id: string) => void;
@@ -20,6 +24,7 @@ export default function ProfileScreen({ onNavigate }: ProfileScreenProps) {
 
   const displayName = getUserDisplayName(userData);
   const username = getUserUsername(userData);
+  const photoUrl = getPhotoUrl(userData);
 
   const stats = [
     { label: "Сканы", val: "47", icon: "qr", c: "#3BE0FF" },
@@ -55,7 +60,7 @@ export default function ProfileScreen({ onNavigate }: ProfileScreenProps) {
       <Body>
         <GlassCard glow="#8B6CFF" style={{ padding: 18 }}>
           <div className="flex items-center gap-4">
-            <Avatar size={60} ring="#A78BFF" seed={2} />
+            <Avatar size={60} ring="#A78BFF" seed={2} src={photoUrl} />
             <div className="flex-1">
               <div
                 className="font-ui font-bold text-txt"

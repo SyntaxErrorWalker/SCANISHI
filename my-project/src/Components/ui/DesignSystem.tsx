@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Icon from "./Icon";
 
 export const RAR: Record<string, { c: string; name: string }> = {
@@ -267,31 +268,55 @@ interface AvatarProps {
   size?: number;
   ring?: string;
   seed?: number;
+  src?: string;
+  alt?: string;
 }
-export function Avatar({ size = 44, ring, seed = 0 }: AvatarProps) {
+export function Avatar({ size = 44, ring, seed = 0, src, alt }: AvatarProps) {
+  const normalizedSrc = typeof src === "string" && src.trim() ? src.trim() : "";
   const grads = [
     "linear-gradient(135deg,#8B6CFF,#3BE0FF)",
     "linear-gradient(135deg,#FF6CC8,#A78BFF)",
     "linear-gradient(135deg,#3BE0FF,#5CE7A3)",
     "linear-gradient(135deg,#FFC061,#FF6CC8)",
   ];
+  const placeholder = grads[Math.abs(seed) % grads.length];
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    setLoadError(false);
+  }, [normalizedSrc]);
+
   return (
     <div
       className="relative shrink-0 overflow-hidden rounded-full"
       style={{
         width: size,
         height: size,
-        background: grads[seed % grads.length],
+        background: placeholder,
         boxShadow: ring ? `0 0 0 2px #0A0912, 0 0 0 3.5px ${ring}` : "none",
       }}
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 55%)",
-        }}
-      />
+      {normalizedSrc && !loadError && (
+        <img
+          src={normalizedSrc}
+          alt={alt || "avatar"}
+          className="h-full w-full rounded-full object-cover"
+          style={{ background: "rgba(8,7,14,0.6)" }}
+          onError={() => {
+            setLoadError(true);
+          }}
+        />
+      )}
+
+      {(!normalizedSrc || loadError) && (
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 55%)",
+          }}
+        />
+      )}
     </div>
   );
 }
