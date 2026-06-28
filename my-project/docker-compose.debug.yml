@@ -1,0 +1,13 @@
+services:
+  app-debug:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BOT_USERNAME: ${BOT_USERNAME:-}
+        BACKEND_URL: ${BACKEND_URL:-https://test.backend.skanishi.shide.world/}
+        YMAPS_API_KEY: ${YMAPS_API_KEY:-}
+        DEBUG: ${DEBUG:-true}
+    ports:
+      - "8080:80"
+    restart: unless-stopped

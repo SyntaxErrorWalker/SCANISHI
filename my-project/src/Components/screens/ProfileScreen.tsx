@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Screen,
   TgHeader,
@@ -9,43 +8,18 @@ import {
   Avatar,
 } from "../ui/DesignSystem";
 import Icon from "../ui/Icon";
-import { initTelegramAuth } from "../../lib/auth";
-import { parseJwt } from "../../lib/jwt";
-import type { JwtPayload } from "../../lib/jwt";
+import { useAuth } from "../../lib/auth-context";
+import { getUserDisplayName, getUserUsername } from "../../lib/user";
 
 interface ProfileScreenProps {
   onNavigate?: (id: string) => void;
 }
 
 export default function ProfileScreen({ onNavigate }: ProfileScreenProps) {
-  const [userData, setUserData] = useState<JwtPayload | null>(null);
+  const { userData } = useAuth();
 
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadUserData() {
-      const token = await initTelegramAuth();
-
-      if (isMounted) {
-        setUserData(token ? parseJwt(token) : null);
-      }
-    }
-
-    void loadUserData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const displayName =
-    typeof userData?.first_name === "string" && userData.first_name.trim()
-      ? userData.first_name
-      : "Нэйт";
-  const username =
-    typeof userData?.username === "string" && userData.username.trim()
-      ? `@${userData.username}`
-      : "@nate_void";
+  const displayName = getUserDisplayName(userData);
+  const username = getUserUsername(userData);
 
   const stats = [
     { label: "Сканы", val: "47", icon: "qr", c: "#3BE0FF" },

@@ -8,12 +8,18 @@ import {
   RarityTag,
 } from "../ui/DesignSystem";
 import Icon from "../ui/Icon";
+import { useAuth } from "../../lib/auth-context";
+import { getUserDisplayName, getUserUsername } from "../../lib/user";
 
 interface HomeScreenProps {
   onNavigate?: (id: string) => void;
 }
 
 export default function HomeScreen({ onNavigate }: HomeScreenProps) {
+  const { userData } = useAuth();
+  const displayName = getUserDisplayName(userData);
+  const username = getUserUsername(userData);
+
   const quests = [
     {
       name: "Тени Старого города",
@@ -51,7 +57,7 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
   return (
     <Screen nav="home" onNavigate={onNavigate}>
       <TgHeader
-        title="Привет, Нэйт"
+        title={`Привет, ${displayName}`}
         sub="СЕЗОН 2 · ПУЛЬС ГОРОДА"
         right={
           <div
@@ -91,7 +97,7 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
                   className="font-ui font-bold text-txt"
                   style={{ fontSize: 18 }}
                 >
-                  @nate_void
+                  {username}
                 </span>
               </div>
               <div

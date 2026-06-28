@@ -1,5 +1,12 @@
-const API_URL = import.meta.env.VITE_BACKEND_URL?.trim() || "";
+const API_URL =
+  import.meta.env.VITE_BACKEND_URL?.trim() ||
+  "https://test.backend.skanishi.shide.world/";
 const BOT_USERNAME = import.meta.env.VITE_BOT_USERNAME?.trim() || "";
+const DEBUG_FLAG = import.meta.env.VITE_DEBUG || "true";
+
+export const DEBUG =
+  typeof DEBUG_FLAG === "string" &&
+  ["1", "true", "yes", "on"].includes(DEBUG_FLAG.trim().toLowerCase());
 
 export function buildApiUrl(path: string) {
   if (!API_URL) {

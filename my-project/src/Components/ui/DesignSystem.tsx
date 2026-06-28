@@ -388,7 +388,9 @@ export function BottomNav({ active = "home", onNavigate }: BottomNavProps) {
           if (it.center)
             return (
               <div key={it.id} className="relative w-14 flex justify-center">
-                <div
+                <button
+                  key={it.id}
+                  onClick={() => onNavigate?.(it.id)}
                   className="holo flex items-center justify-center"
                   style={{
                     width: 54,
@@ -405,7 +407,7 @@ export function BottomNav({ active = "home", onNavigate }: BottomNavProps) {
                   }}
                 >
                   <Icon name="qr" size={26} color="#0A0912" sw={2} />
-                </div>
+                </button>
               </div>
             );
           const on = active === it.id;

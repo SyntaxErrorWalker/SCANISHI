@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import SplashScreen from "./Components/screens/SplashScreen";
 import LoginScreen from "./Components/screens/LoginScreen";
 import HomeScreen from "./Components/screens/HomeScreen";
 import ScanScreen from "./Components/screens/ScanScreen";
 import MapScreen from "./Components/screens/MapScreen";
 import QuestsScreen from "./Components/screens/QuestsScreen";
 import ProfileScreen from "./Components/screens/ProfileScreen";
-import { getValidAccessToken } from "./lib/auth";
+import { AuthProvider, useAuth } from "./lib/auth-context";
 
 type ScreenId =
   | "splash"
@@ -18,23 +17,33 @@ type ScreenId =
   | "profile";
 
 function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
   const [screen, setScreen] = useState<ScreenId>("splash");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const { accessToken, isAuthLoading, refreshAuth } = useAuth();
 
   useEffect(() => {
-    const t1 = setTimeout(() => setScreen("login"), 2800);
-    return () => clearTimeout(t1);
-  }, []);
+    if (accessToken) {
+      setScreen("home");
+    } else if (!isAuthLoading) {
+      setScreen("login");
+    }
+  }, [accessToken, isAuthLoading]);
 
   const handleLogin = async () => {
-    if (isLoggingIn) return;
+    if (isAuthLoading) return;
 
-    setIsLoggingIn(true);
     setLoginError(null);
 
     try {
-      const token = await getValidAccessToken();
+      const token = await refreshAuth();
       if (token) {
         setScreen("home");
         return;
@@ -46,8 +55,6 @@ function App() {
     } catch (error) {
       console.error("Login failed:", error);
       setLoginError("Backend недоступен или настроен неверно.");
-    } finally {
-      setIsLoggingIn(false);
     }
   };
 
@@ -74,11 +81,10 @@ function App() {
         margin: "0 auto",
       }}
     >
-      {screen === "splash" && <SplashScreen />}
       {screen === "login" && (
         <LoginScreen
           error={loginError}
-          isLoading={isLoggingIn}
+          isLoading={isAuthLoading}
           onLogin={handleLogin}
         />
       )}
