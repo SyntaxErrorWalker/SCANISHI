@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Screen, Body, GlassCard, RarityTag } from "../ui/DesignSystem";
 import Icon from "../ui/Icon";
 
