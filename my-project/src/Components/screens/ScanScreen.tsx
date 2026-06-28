@@ -8,19 +8,15 @@ interface ScanScreenProps {
 
 export default function ScanScreen({ onNavigate }: ScanScreenProps) {
   const [scannedData, setScannedData] = useState("");
-  const [error, setError] = useState("");
 
   const handleScanClick = () => {
     // 1. Check if the app is actually running inside Telegram
     const tg = window.Telegram?.WebApp;
 
     if (!tg) {
-      setError("This feature is only available inside Telegram Mini Apps.");
+      setScannedData("Сканер недоступен в веб-версии");
       return;
     }
-
-    // 2. Clear previous states
-    setError("");
 
     // 3. Trigger the native Telegram QR scanner popup
     tg.showScanQrPopup(
@@ -181,7 +177,7 @@ export default function ScanScreen({ onNavigate }: ScanScreenProps) {
                   className="font-ui font-semibold text-txt"
                   style={{ fontSize: 14 }}
                 >
-                  ТЦ «Орбита» · Вход
+                  {scannedData || "ТЦ «Орбита» · Вход"}
                 </span>
                 <RarityTag rarity="rare" />
               </div>
